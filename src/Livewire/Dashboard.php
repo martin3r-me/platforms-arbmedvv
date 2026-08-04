@@ -37,9 +37,13 @@ class Dashboard extends Component
             ];
         })->values();
 
+        // Zuletzt geänderte Anlässe (rechte Aktivitäten-Sidebar)
+        $recent = $anlaesse->sortByDesc('updated_at')->take(5)->values();
+
         return view('arbmedvv::livewire.dashboard', [
             'stats'       => $stats,
             'grouped'     => $grouped,
+            'recent'      => $recent,
             'currentDate' => now()->format('d.m.Y'),
         ])->layout('platform::layouts.app');
     }

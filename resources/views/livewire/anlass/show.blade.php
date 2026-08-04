@@ -92,4 +92,62 @@
         @endif
 
     </x-ui-page-container>
+
+    {{-- Linke Sidebar: Eigenschaften --}}
+    <x-slot name="sidebar">
+        <x-ui-page-sidebar title="Übersicht" width="w-80" :defaultOpen="true">
+            <div class="p-6 space-y-6">
+                <div>
+                    <h3 class="text-xs font-semibold uppercase tracking-wide text-[color:var(--nx-faint)] mb-3">Eigenschaften</h3>
+                    <div class="space-y-3 text-sm">
+                        <div>
+                            <div class="text-xs text-[color:var(--nx-faint)]">Teil</div>
+                            <div class="text-[color:var(--nx-text)]">{{ $anlass->teilKurzLabel() }}</div>
+                        </div>
+                        <div>
+                            <div class="text-xs text-[color:var(--nx-faint)]">Vorsorgeart</div>
+                            <div><x-nx-badge :variant="$artVariant[$anlass->vorsorgeart] ?? 'neutral'" dot>{{ $anlass->vorsorgeartLabel() }}</x-nx-badge></div>
+                        </div>
+                        <div>
+                            <div class="text-xs text-[color:var(--nx-faint)]">Status</div>
+                            <div class="text-[color:var(--nx-text)]">{{ $anlass->status === 'aktiv' ? 'Aktiv' : 'Archiviert' }}</div>
+                        </div>
+                        <div>
+                            <div class="text-xs text-[color:var(--nx-faint)]">Rechtsgrundlage</div>
+                            <div class="text-[color:var(--nx-text)]">{{ $anlass->rechtsgrundlage ?: '—' }}</div>
+                        </div>
+                        <div>
+                            <div class="text-xs text-[color:var(--nx-faint)]">Grenzwert</div>
+                            <div class="text-[color:var(--nx-text)]">{{ $anlass->grenzwert ?: '—' }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </x-ui-page-sidebar>
+    </x-slot>
+
+    {{-- Rechte Sidebar: Aktivitäten --}}
+    <x-slot name="activity">
+        <x-ui-page-sidebar title="Aktivitäten" width="w-80" :defaultOpen="false" storeKey="activityOpen" side="right">
+            <div class="p-6 space-y-6">
+                <div>
+                    <h3 class="text-xs font-semibold uppercase tracking-wide text-[color:var(--nx-faint)] mb-3">Verlauf</h3>
+                    <div class="space-y-3 text-sm">
+                        <div>
+                            <div class="text-xs text-[color:var(--nx-faint)]">Erstellt</div>
+                            <div class="text-[color:var(--nx-text)]">{{ $anlass->created_at?->format('d.m.Y H:i') }}</div>
+                            @if($anlass->createdByUser)
+                                <div class="text-xs text-[color:var(--nx-muted)]">von {{ $anlass->createdByUser->name }}</div>
+                            @endif
+                        </div>
+                        <div>
+                            <div class="text-xs text-[color:var(--nx-faint)]">Zuletzt geändert</div>
+                            <div class="text-[color:var(--nx-text)]">{{ $anlass->updated_at?->format('d.m.Y H:i') }}</div>
+                            <div class="text-xs text-[color:var(--nx-muted)]">{{ $anlass->updated_at?->diffForHumans() }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </x-ui-page-sidebar>
+    </x-slot>
 </x-ui-page>

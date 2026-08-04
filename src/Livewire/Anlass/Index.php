@@ -97,6 +97,11 @@ class Index extends Component
 
         $anlaesse = $query->orderBy('teil')->orderBy('position')->get();
 
+        // Zuletzt geänderte Anlässe (rechte Aktivitäten-Sidebar), unabhängig vom Filter
+        $recent = $team
+            ? Anlass::forTeam($team->id)->orderByDesc('updated_at')->take(5)->get()
+            : collect();
+
         $teile = config('arbmedvv.teile');
         $grouped = collect($teile)
             ->map(fn ($label, $key) => [
@@ -110,6 +115,7 @@ class Index extends Component
         return view('arbmedvv::livewire.anlass.index', [
             'grouped'       => $grouped,
             'total'         => $anlaesse->count(),
+            'recent'        => $recent,
             'teile'         => $teile,
             'vorsorgearten' => config('arbmedvv.vorsorgearten'),
         ])->layout('platform::layouts.app');

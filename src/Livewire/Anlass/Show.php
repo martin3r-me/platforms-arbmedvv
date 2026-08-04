@@ -86,6 +86,8 @@ class Show extends Component
 
     public function render()
     {
+        $this->anlass->loadMissing('createdByUser');
+
         return view('arbmedvv::livewire.anlass.show', [
             'teile'         => config('arbmedvv.teile'),
             'vorsorgearten' => config('arbmedvv.vorsorgearten'),

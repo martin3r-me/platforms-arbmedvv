@@ -99,4 +99,44 @@
             </div>
         </x-slot>
     </x-nx-modal>
+
+    {{-- Linke Sidebar: Übersicht --}}
+    <x-slot name="sidebar">
+        <x-ui-page-sidebar title="Übersicht" width="w-80" :defaultOpen="true">
+            <div class="p-6 space-y-6">
+                <div>
+                    <h3 class="text-xs font-semibold uppercase tracking-wide text-[color:var(--nx-faint)] mb-3">Angezeigt</h3>
+                    <div class="text-sm text-[color:var(--nx-muted)]">{{ $total }} {{ $total === 1 ? 'Anlass' : 'Anlässe' }}</div>
+                </div>
+                <div>
+                    <h3 class="text-xs font-semibold uppercase tracking-wide text-[color:var(--nx-faint)] mb-3">Legende Vorsorgeart</h3>
+                    <div class="space-y-2">
+                        <div><x-nx-badge variant="danger" dot>Pflichtvorsorge</x-nx-badge></div>
+                        <div><x-nx-badge variant="info" dot>Angebotsvorsorge</x-nx-badge></div>
+                        <div><x-nx-badge variant="neutral" dot>Nachgehende Vorsorge</x-nx-badge></div>
+                    </div>
+                </div>
+            </div>
+        </x-ui-page-sidebar>
+    </x-slot>
+
+    {{-- Rechte Sidebar: Aktivitäten --}}
+    <x-slot name="activity">
+        <x-ui-page-sidebar title="Aktivitäten" width="w-80" :defaultOpen="false" storeKey="activityOpen" side="right">
+            <div class="p-6 space-y-6">
+                <div>
+                    <h3 class="text-xs font-semibold uppercase tracking-wide text-[color:var(--nx-faint)] mb-3">Zuletzt geändert</h3>
+                    @forelse($recent as $anlass)
+                        <a href="{{ route('arbmedvv.anlaesse.show', $anlass) }}" wire:navigate
+                           class="block rounded-md -mx-2 px-2 py-2 hover:bg-[var(--nx-hover)]">
+                            <div class="text-sm text-[color:var(--nx-text)] truncate">{{ $anlass->titel }}</div>
+                            <div class="text-xs text-[color:var(--nx-faint)]">{{ $anlass->updated_at?->diffForHumans() }}</div>
+                        </a>
+                    @empty
+                        <div class="text-sm text-[color:var(--nx-muted)]">Keine Aktivitäten verfügbar.</div>
+                    @endforelse
+                </div>
+            </div>
+        </x-ui-page-sidebar>
+    </x-slot>
 </x-ui-page>

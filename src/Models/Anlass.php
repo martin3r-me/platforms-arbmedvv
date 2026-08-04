@@ -96,6 +96,11 @@ class Anlass extends Model
         return config("arbmedvv.teile.{$this->teil}", $this->teil);
     }
 
+    public function teilKurzLabel(): string
+    {
+        return config("arbmedvv.teile_kurz.{$this->teil}", $this->teilLabel());
+    }
+
     public function vorsorgeartLabel(): string
     {
         return config("arbmedvv.vorsorgearten.{$this->vorsorgeart}", $this->vorsorgeart);

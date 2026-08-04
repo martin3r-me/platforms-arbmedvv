@@ -63,6 +63,14 @@ return [
         'sonstige'     => 'Teil 4 – Sonstige Tätigkeiten',
     ],
 
+    // Kurzlabels (für schmale Sidebar / Badges)
+    'teile_kurz' => [
+        'gefahrstoffe' => 'Gefahrstoffe',
+        'biostoffe'    => 'Biologische Arbeitsstoffe',
+        'physikalisch' => 'Physikalische Einwirkungen',
+        'sonstige'     => 'Sonstige Tätigkeiten',
+    ],
+
     // Art der Vorsorge
     'vorsorgearten' => [
         'pflicht'    => 'Pflichtvorsorge',
