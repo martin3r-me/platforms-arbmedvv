@@ -1,0 +1,28 @@
+{
+    "name": "martin3r/platforms-arbmedvv",
+    "description": "ArbMedVV Module for Platform - Katalog arbeitsmedizinischer Vorsorge-Anlässe (Anhang ArbMedVV)",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Platform Team",
+            "email": "team@platform.com"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Platform\\Arbmedvv\\": "src/",
+            "Platform\\Arbmedvv\\Database\\": "database/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Platform\\Arbmedvv\\ArbmedvvServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
