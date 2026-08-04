@@ -1,8 +1,8 @@
 {{-- ArbMedVV – Anlass-Katalog (Liste nach Teil gruppiert, Suche + Filter + Anlege-Modal) --}}
 @php
-    $artVariant = ['pflicht' => 'danger', 'angebot' => 'info', 'nachgehend' => 'neutral'];
-    $teilOptions = collect($teile)->map(fn ($label, $key) => ['value' => $key, 'label' => $label])->values()->all();
-    $artOptions  = collect($vorsorgearten)->map(fn ($label, $key) => ['value' => $key, 'label' => $label])->values()->all();
+    $careTypeVariant = ['mandatory' => 'danger', 'offered' => 'info', 'follow_up' => 'neutral'];
+    $sectionOptions = collect($sections)->map(fn ($label, $key) => ['value' => $key, 'label' => $label])->values()->all();
+    $careTypeOptions = collect($careTypes)->map(fn ($label, $key) => ['value' => $key, 'label' => $label])->values()->all();
 @endphp
 
 <x-ui-page>
@@ -29,10 +29,10 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <x-nx-input-text name="search" label="Suche" wire:model.live.debounce.300ms="search"
                     placeholder="Titel, Auslöser, Grenzwert …" />
-                <x-nx-input-select name="filterTeil" label="Teil" wire:model.live="filterTeil"
-                    nullable nullLabel="Alle Teile" :options="$teilOptions" />
-                <x-nx-input-select name="filterVorsorgeart" label="Vorsorgeart" wire:model.live="filterVorsorgeart"
-                    nullable nullLabel="Alle Arten" :options="$artOptions" />
+                <x-nx-input-select name="filterSection" label="Teil" wire:model.live="filterSection"
+                    nullable nullLabel="Alle Teile" :options="$sectionOptions" />
+                <x-nx-input-select name="filterCareType" label="Vorsorgeart" wire:model.live="filterCareType"
+                    nullable nullLabel="Alle Arten" :options="$careTypeOptions" />
             </div>
         </x-nx-card>
 
@@ -47,19 +47,19 @@
             </x-nx-card>
         @else
             @foreach($grouped as $group)
-                <x-nx-section icon="heroicon-o-folder" :title="$group['label']" :hint="$group['anlaesse']->count()">
+                <x-nx-section icon="heroicon-o-folder" :title="$group['label']" :hint="$group['occasions']->count()">
                     <x-nx-card flush class="divide-y divide-[color:var(--nx-line)]">
-                        @foreach($group['anlaesse'] as $anlass)
+                        @foreach($group['occasions'] as $occasion)
                             <x-nx-list-item
-                                :href="route('arbmedvv.anlaesse.show', $anlass)"
+                                :href="route('arbmedvv.occasions.show', $occasion)"
                                 wire:navigate
                                 icon="heroicon-o-document-text"
-                                :title="$anlass->titel"
-                                :subtitle="$anlass->grenzwert"
-                                :meta="$anlass->rechtsgrundlage">
+                                :title="$occasion->title"
+                                :subtitle="$occasion->threshold"
+                                :meta="$occasion->legal_basis">
                                 <x-slot name="trailing">
-                                    <x-nx-badge :variant="$artVariant[$anlass->vorsorgeart] ?? 'neutral'" dot>
-                                        {{ $anlass->vorsorgeartLabel() }}
+                                    <x-nx-badge :variant="$careTypeVariant[$occasion->care_type] ?? 'neutral'" dot>
+                                        {{ $occasion->careTypeLabel() }}
                                     </x-nx-badge>
                                 </x-slot>
                             </x-nx-list-item>
@@ -77,19 +77,19 @@
 
         <div class="space-y-4">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <x-nx-input-select name="form.teil" label="Teil" wire:model="form.teil" :options="$teilOptions" required />
-                <x-nx-input-select name="form.vorsorgeart" label="Vorsorgeart" wire:model="form.vorsorgeart" :options="$artOptions" required />
+                <x-nx-input-select name="form.section" label="Teil" wire:model="form.section" :options="$sectionOptions" required />
+                <x-nx-input-select name="form.care_type" label="Vorsorgeart" wire:model="form.care_type" :options="$careTypeOptions" required />
             </div>
-            <x-nx-input-text name="form.titel" label="Titel" wire:model="form.titel" placeholder="z.B. Feuchtarbeit" required />
-            <x-nx-input-textarea name="form.ausloeser" label="Auslöser (Gefährdungs-/Expositionstatbestand)"
-                wire:model="form.ausloeser" :rows="3" placeholder="Wortlaut des auslösenden Tatbestands" required />
+            <x-nx-input-text name="form.title" label="Titel" wire:model="form.title" placeholder="z.B. Feuchtarbeit" required />
+            <x-nx-input-textarea name="form.trigger" label="Auslöser (Gefährdungs-/Expositionstatbestand)"
+                wire:model="form.trigger" :rows="3" placeholder="Wortlaut des auslösenden Tatbestands" required />
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <x-nx-input-text name="form.grenzwert" label="Grenzwert / Schwelle" wire:model="form.grenzwert"
+                <x-nx-input-text name="form.threshold" label="Grenzwert / Schwelle" wire:model="form.threshold"
                     placeholder="z.B. ≥ 4 Std./Tag, 85 dB(A)" />
-                <x-nx-input-text name="form.rechtsgrundlage" label="Rechtsgrundlage" wire:model="form.rechtsgrundlage"
+                <x-nx-input-text name="form.legal_basis" label="Rechtsgrundlage" wire:model="form.legal_basis"
                     placeholder="z.B. Anhang Teil 1 (2)" />
             </div>
-            <x-nx-input-textarea name="form.beschreibung" label="Beschreibung / Hinweise" wire:model="form.beschreibung" :rows="3" />
+            <x-nx-input-textarea name="form.description" label="Beschreibung / Hinweise" wire:model="form.description" :rows="3" />
         </div>
 
         <x-slot name="footer">
@@ -126,11 +126,11 @@
             <div class="p-6 space-y-6">
                 <div>
                     <h3 class="text-xs font-semibold uppercase tracking-wide text-[color:var(--nx-faint)] mb-3">Zuletzt geändert</h3>
-                    @forelse($recent as $anlass)
-                        <a href="{{ route('arbmedvv.anlaesse.show', $anlass) }}" wire:navigate
+                    @forelse($recent as $occasion)
+                        <a href="{{ route('arbmedvv.occasions.show', $occasion) }}" wire:navigate
                            class="block rounded-md -mx-2 px-2 py-2 hover:bg-[var(--nx-hover)]">
-                            <div class="text-sm text-[color:var(--nx-text)] truncate">{{ $anlass->titel }}</div>
-                            <div class="text-xs text-[color:var(--nx-faint)]">{{ $anlass->updated_at?->diffForHumans() }}</div>
+                            <div class="text-sm text-[color:var(--nx-text)] truncate">{{ $occasion->title }}</div>
+                            <div class="text-xs text-[color:var(--nx-faint)]">{{ $occasion->updated_at?->diffForHumans() }}</div>
                         </a>
                     @empty
                         <div class="text-sm text-[color:var(--nx-muted)]">Keine Aktivitäten verfügbar.</div>

@@ -16,7 +16,7 @@ class ArbmedvvOverviewTool implements ToolContract, ToolMetadataContract
 
     public function getDescription(): string
     {
-        return 'GET /arbmedvv/overview - Zeigt Uebersicht ueber das ArbMedVV-Modul (Konzept, Datenmodell, Taxonomie, Tools). Das Modul ist ein team-weiter Katalog der arbeitsmedizinischen Vorsorge-Anlaesse nach dem Anhang der ArbMedVV.';
+        return 'GET /arbmedvv/overview - Overview of the ArbMedVV module (concept, data model, taxonomy, tools). The module is a team-wide catalog of the occupational-health preventive-care occasions from the annex of the ArbMedVV.';
     }
 
     public function getSchema(): array
@@ -35,37 +35,38 @@ class ArbmedvvOverviewTool implements ToolContract, ToolMetadataContract
                 'module' => 'arbmedvv',
                 'scope' => [
                     'team_scoped' => true,
-                    'team_id_source' => 'ToolContext.team bzw. team_id Parameter',
+                    'team_id_source' => 'ToolContext.team or team_id parameter',
                 ],
                 'concepts' => [
-                    'anlass' => [
-                        'model' => 'Platform\\Arbmedvv\\Models\\Anlass',
-                        'table' => 'arbmedvv_anlaesse',
-                        'key_fields' => ['id', 'uuid', 'teil', 'vorsorgeart', 'titel', 'ausloeser', 'grenzwert', 'rechtsgrundlage', 'beschreibung', 'status', 'position', 'team_id'],
-                        'note' => 'Ein Datensatz = ein Vorsorge-Anlass aus dem Anhang der ArbMedVV.',
+                    'occasion' => [
+                        'model' => 'Platform\\Arbmedvv\\Models\\Occasion',
+                        'table' => 'arbmedvv_occasions',
+                        'morph_alias' => 'arbmedvv_occasion',
+                        'key_fields' => ['id', 'uuid', 'section', 'care_type', 'title', 'trigger', 'threshold', 'legal_basis', 'description', 'status', 'position', 'team_id'],
+                        'note' => 'One record = one preventive-care occasion from the annex of the ArbMedVV.',
                     ],
                 ],
                 'taxonomy' => [
-                    'teil' => config('arbmedvv.teile'),
-                    'vorsorgeart' => config('arbmedvv.vorsorgearten'),
-                    'status' => ['aktiv', 'archiviert'],
+                    'section' => config('arbmedvv.sections'),
+                    'care_type' => config('arbmedvv.care_types'),
+                    'status' => ['active', 'archived'],
                 ],
                 'fields' => [
-                    'titel' => 'Kurzbezeichnung, z.B. "Feuchtarbeit".',
-                    'ausloeser' => 'Wortlaut des auslösenden Gefährdungs-/Expositionstatbestands.',
-                    'grenzwert' => 'Optionale Schwelle, z.B. "≥ 4 Std./Tag", "85 dB(A)".',
-                    'rechtsgrundlage' => 'Fundstelle, z.B. "Anhang Teil 1 (2)".',
+                    'title' => 'Short name, e.g. "Feuchtarbeit".',
+                    'trigger' => 'Verbatim wording of the triggering hazard/exposure statement.',
+                    'threshold' => 'Optional threshold, e.g. ">= 4 h/day", "85 dB(A)".',
+                    'legal_basis' => 'Reference, e.g. "Annex Part 1 (2)".',
                 ],
                 'related_tools' => [
-                    'list' => 'arbmedvv.anlaesse.GET',
-                    'get' => 'arbmedvv.anlass.GET',
-                    'create' => 'arbmedvv.anlaesse.POST',
-                    'update' => 'arbmedvv.anlaesse.PUT',
-                    'delete' => 'arbmedvv.anlaesse.DELETE',
+                    'list' => 'arbmedvv.occasions.GET',
+                    'get' => 'arbmedvv.occasion.GET',
+                    'create' => 'arbmedvv.occasions.POST',
+                    'update' => 'arbmedvv.occasions.PUT',
+                    'delete' => 'arbmedvv.occasions.DELETE',
                 ],
             ]);
         } catch (\Throwable $e) {
-            return ToolResult::error('EXECUTION_ERROR', 'Fehler beim Laden der ArbMedVV-Uebersicht: ' . $e->getMessage());
+            return ToolResult::error('EXECUTION_ERROR', 'Error loading ArbMedVV overview: ' . $e->getMessage());
         }
     }
 

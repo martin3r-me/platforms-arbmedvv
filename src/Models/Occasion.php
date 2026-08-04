@@ -8,27 +8,27 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Symfony\Component\Uid\UuidV7;
 
 /**
- * Ein arbeitsmedizinischer Vorsorge-Anlass nach dem Anhang der ArbMedVV.
+ * An occupational-health preventive-care occasion from the annex of the ArbMedVV.
  *
- * teil:        Teil 1–4 (gefahrstoffe|biostoffe|physikalisch|sonstige)
- * vorsorgeart: pflicht|angebot|nachgehend
+ * section:   annex part 1–4 (hazardous_substances|biological_agents|physical_agents|other)
+ * care_type: mandatory|offered|follow_up
  */
-class Anlass extends Model
+class Occasion extends Model
 {
     use SoftDeletes;
 
-    protected $table = 'arbmedvv_anlaesse';
+    protected $table = 'arbmedvv_occasions';
 
     protected $fillable = [
         'uuid',
         'team_id',
-        'teil',
-        'vorsorgeart',
-        'titel',
-        'ausloeser',
-        'grenzwert',
-        'rechtsgrundlage',
-        'beschreibung',
+        'section',
+        'care_type',
+        'title',
+        'trigger',
+        'threshold',
+        'legal_basis',
+        'description',
         'status',
         'position',
         'created_by_user_id',
@@ -71,7 +71,7 @@ class Anlass extends Model
 
     public function scopeActive($query)
     {
-        return $query->where('status', 'aktiv');
+        return $query->where('status', 'active');
     }
 
     public function scopeByStatus($query, string $status)
@@ -79,30 +79,30 @@ class Anlass extends Model
         return $query->where('status', $status);
     }
 
-    public function scopeByTeil($query, string $teil)
+    public function scopeBySection($query, string $section)
     {
-        return $query->where('teil', $teil);
+        return $query->where('section', $section);
     }
 
-    public function scopeByVorsorgeart($query, string $vorsorgeart)
+    public function scopeByCareType($query, string $careType)
     {
-        return $query->where('vorsorgeart', $vorsorgeart);
+        return $query->where('care_type', $careType);
     }
 
-    // Labels (aus config)
+    // Labels (from config; display labels stay German)
 
-    public function teilLabel(): string
+    public function sectionLabel(): string
     {
-        return config("arbmedvv.teile.{$this->teil}", $this->teil);
+        return config("arbmedvv.sections.{$this->section}", $this->section);
     }
 
-    public function teilKurzLabel(): string
+    public function sectionShortLabel(): string
     {
-        return config("arbmedvv.teile_kurz.{$this->teil}", $this->teilLabel());
+        return config("arbmedvv.sections_short.{$this->section}", $this->sectionLabel());
     }
 
-    public function vorsorgeartLabel(): string
+    public function careTypeLabel(): string
     {
-        return config("arbmedvv.vorsorgearten.{$this->vorsorgeart}", $this->vorsorgeart);
+        return config("arbmedvv.care_types.{$this->care_type}", $this->care_type);
     }
 }

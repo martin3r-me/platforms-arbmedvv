@@ -5,6 +5,7 @@ namespace Platform\Arbmedvv;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Livewire\Livewire;
 use Platform\Core\PlatformCore;
 use Platform\Core\Routing\ModuleRouter;
@@ -20,6 +21,11 @@ class ArbmedvvServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        // Morph alias for dimension links / polymorphic relations (short alias instead of FQCN)
+        Relation::morphMap([
+            'arbmedvv_occasion' => \Platform\Arbmedvv\Models\Occasion::class,
+        ]);
+
         // Step 1: Register module
         if (
             config()->has('arbmedvv.routing') &&
@@ -59,10 +65,13 @@ class ArbmedvvServiceProvider extends ServiceProvider
 
         // Step 7: LLM Tools
         $this->registerTools();
+
+        // Step 8: Organization graph integration (EntityLinkProvider)
+        $this->registerOrganizationIntegration();
     }
 
     /**
-     * Registriert die MCP/LLM-Tools des Moduls.
+     * Registers the module's MCP/LLM tools.
      */
     protected function registerTools(): void
     {
@@ -72,21 +81,35 @@ class ArbmedvvServiceProvider extends ServiceProvider
             // Overview
             $registry->register(new \Platform\Arbmedvv\Tools\ArbmedvvOverviewTool());
 
-            // Anlass CRUD
-            $registry->register(new \Platform\Arbmedvv\Tools\ListAnlaesseTool());
-            $registry->register(new \Platform\Arbmedvv\Tools\GetAnlassTool());
-            $registry->register(new \Platform\Arbmedvv\Tools\CreateAnlassTool());
-            $registry->register(new \Platform\Arbmedvv\Tools\UpdateAnlassTool());
-            $registry->register(new \Platform\Arbmedvv\Tools\DeleteAnlassTool());
+            // Occasion CRUD
+            $registry->register(new \Platform\Arbmedvv\Tools\ListOccasionsTool());
+            $registry->register(new \Platform\Arbmedvv\Tools\GetOccasionTool());
+            $registry->register(new \Platform\Arbmedvv\Tools\CreateOccasionTool());
+            $registry->register(new \Platform\Arbmedvv\Tools\UpdateOccasionTool());
+            $registry->register(new \Platform\Arbmedvv\Tools\DeleteOccasionTool());
         } catch (\Throwable $e) {
-            \Log::warning('ArbMedVV: Tool-Registrierung fehlgeschlagen', ['error' => $e->getMessage()]);
+            \Log::warning('ArbMedVV: tool registration failed', ['error' => $e->getMessage()]);
         }
     }
 
     /**
-     * Registriert alle Livewire-Komponenten automatisch.
+     * Registers the EntityLinkProvider so Occasion records render richly when linked
+     * to organization entities via dimension links. No-op if organization is absent.
+     */
+    protected function registerOrganizationIntegration(): void
+    {
+        try {
+            resolve(\Platform\Organization\Services\EntityLinkRegistry::class)
+                ->register(new \Platform\Arbmedvv\Organization\ArbmedvvEntityLinkProvider());
+        } catch (\Throwable $e) {
+            // Organization module not loaded — dimension links still work, just without rich rendering.
+        }
+    }
+
+    /**
+     * Registers all Livewire components automatically.
      *
-     * Datei src/Livewire/Anlass/Index.php -> Alias arbmedvv.anlass.index
+     * File src/Livewire/Occasion/Index.php -> alias arbmedvv.occasion.index
      */
     protected function registerLivewireComponents(): void
     {

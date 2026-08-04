@@ -17,7 +17,7 @@
             @svg('heroicon-o-home', 'w-4 h-4 text-[var(--nx-text)]')
             <span class="ml-2 text-sm">Dashboard</span>
         </x-ui-sidebar-item>
-        <x-ui-sidebar-item :href="route('arbmedvv.anlaesse.index')">
+        <x-ui-sidebar-item :href="route('arbmedvv.occasions.index')">
             @svg('heroicon-o-list-bullet', 'w-4 h-4 text-[var(--nx-text)]')
             <span class="ml-2 text-sm">Anlässe</span>
         </x-ui-sidebar-item>
@@ -25,12 +25,12 @@
 
     {{-- Abschnitt: Teile (Schnellfilter mit Anzahl) --}}
     <x-ui-sidebar-list label="Teile">
-        @foreach($teileKurz as $key => $label)
-            <x-ui-sidebar-item :href="route('arbmedvv.anlaesse.index', ['filterTeil' => $key])">
+        @foreach($sectionsShort as $key => $label)
+            <x-ui-sidebar-item :href="route('arbmedvv.occasions.index', ['filterSection' => $key])">
                 @svg('heroicon-o-folder', 'w-4 h-4 text-[var(--nx-text)]')
                 <span class="ml-2 text-sm flex-1 truncate">{{ $label }}</span>
-                @if(($teilCounts[$key] ?? 0) > 0)
-                    <span class="text-xs text-[color:var(--nx-faint)]">{{ $teilCounts[$key] }}</span>
+                @if(($sectionCounts[$key] ?? 0) > 0)
+                    <span class="text-xs text-[color:var(--nx-faint)]">{{ $sectionCounts[$key] }}</span>
                 @endif
             </x-ui-sidebar-item>
         @endforeach
@@ -42,7 +42,7 @@
             <a href="{{ route('arbmedvv.dashboard') }}" wire:navigate class="flex items-center justify-center p-2 rounded-md text-[var(--nx-text)] hover:bg-[var(--nx-bg)]">
                 @svg('heroicon-o-home', 'w-5 h-5')
             </a>
-            <a href="{{ route('arbmedvv.anlaesse.index') }}" wire:navigate class="flex items-center justify-center p-2 rounded-md text-[var(--nx-text)] hover:bg-[var(--nx-bg)]">
+            <a href="{{ route('arbmedvv.occasions.index') }}" wire:navigate class="flex items-center justify-center p-2 rounded-md text-[var(--nx-text)] hover:bg-[var(--nx-bg)]">
                 @svg('heroicon-o-list-bullet', 'w-5 h-5')
             </a>
         </div>

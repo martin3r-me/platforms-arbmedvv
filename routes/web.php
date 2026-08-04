@@ -1,18 +1,18 @@
 <?php
 
 /**
- * ArbMedVV – Web-Routes
+ * ArbMedVV – web routes
  *
- * Prefix (aus config): /arbmedvv
+ * Prefix (from config): /arbmedvv
  */
 
 use Platform\Arbmedvv\Livewire\Dashboard;
-use Platform\Arbmedvv\Livewire\Anlass\Index as AnlassIndex;
-use Platform\Arbmedvv\Livewire\Anlass\Show as AnlassShow;
+use Platform\Arbmedvv\Livewire\Occasion\Index as OccasionIndex;
+use Platform\Arbmedvv\Livewire\Occasion\Show as OccasionShow;
 
-// Dashboard – Katalog-Übersicht
+// Dashboard – catalog overview
 Route::get('/', Dashboard::class)->name('arbmedvv.dashboard');
 
-// Anlass-Katalog
-Route::get('/anlaesse', AnlassIndex::class)->name('arbmedvv.anlaesse.index');
-Route::get('/anlaesse/{anlass}', AnlassShow::class)->name('arbmedvv.anlaesse.show');
+// Occasion catalog
+Route::get('/occasions', OccasionIndex::class)->name('arbmedvv.occasions.index');
+Route::get('/occasions/{occasion}', OccasionShow::class)->name('arbmedvv.occasions.show');

@@ -1,10 +1,12 @@
 <?php
 
 /**
- * ArbMedVV Modul – Konfiguration
+ * ArbMedVV module – configuration
  *
- * Katalog der arbeitsmedizinischen Vorsorge-Anlässe nach dem Anhang der ArbMedVV.
- * Struktur folgt dem module-template (kanonische Referenz für nx-Module).
+ * Catalog of occupational-health preventive-care occasions from the annex of the ArbMedVV.
+ *
+ * NOTE: machine identifiers (keys/enum codes) are English; display labels stay German
+ * because the app UI is German.
  *
  * @see Platform\Core\PlatformCore::registerModule()
  */
@@ -21,7 +23,7 @@ return [
     'guard' => 'web',
 
     /**
-     * Haupt-Navigation
+     * Main navigation
      */
     'navigation' => [
         'route' => 'arbmedvv.dashboard',
@@ -43,7 +45,7 @@ return [
                 ],
                 [
                     'label' => 'Anlässe',
-                    'route' => 'arbmedvv.anlaesse.index',
+                    'route' => 'arbmedvv.occasions.index',
                     'icon'  => 'heroicon-o-list-bullet',
                 ],
             ],
@@ -51,30 +53,31 @@ return [
     ],
 
     /**
-     * Taxonomien – fix per Gesetz (Anhang ArbMedVV), daher hier zentral als
-     * Label-Maps statt eigener Tabellen. Genutzt von UI und LLM-Tools.
+     * Taxonomies – fixed by law (ArbMedVV annex). Kept here centrally as label maps
+     * instead of dedicated tables. Enum CODES are English; display labels stay German.
+     * Used by UI and LLM tools.
      */
 
-    // Teile 1–4 des Anhangs
-    'teile' => [
-        'gefahrstoffe' => 'Teil 1 – Tätigkeiten mit Gefahrstoffen',
-        'biostoffe'    => 'Teil 2 – Tätigkeiten mit biologischen Arbeitsstoffen',
-        'physikalisch' => 'Teil 3 – Tätigkeiten mit physikalischen Einwirkungen',
-        'sonstige'     => 'Teil 4 – Sonstige Tätigkeiten',
+    // Annex parts 1–4 (section)
+    'sections' => [
+        'hazardous_substances' => 'Teil 1 – Tätigkeiten mit Gefahrstoffen',
+        'biological_agents'    => 'Teil 2 – Tätigkeiten mit biologischen Arbeitsstoffen',
+        'physical_agents'      => 'Teil 3 – Tätigkeiten mit physikalischen Einwirkungen',
+        'other'                => 'Teil 4 – Sonstige Tätigkeiten',
     ],
 
-    // Kurzlabels (für schmale Sidebar / Badges)
-    'teile_kurz' => [
-        'gefahrstoffe' => 'Gefahrstoffe',
-        'biostoffe'    => 'Biologische Arbeitsstoffe',
-        'physikalisch' => 'Physikalische Einwirkungen',
-        'sonstige'     => 'Sonstige Tätigkeiten',
+    // Short labels (for the narrow sidebar / badges)
+    'sections_short' => [
+        'hazardous_substances' => 'Gefahrstoffe',
+        'biological_agents'    => 'Biologische Arbeitsstoffe',
+        'physical_agents'      => 'Physikalische Einwirkungen',
+        'other'                => 'Sonstige Tätigkeiten',
     ],
 
-    // Art der Vorsorge
-    'vorsorgearten' => [
-        'pflicht'    => 'Pflichtvorsorge',
-        'angebot'    => 'Angebotsvorsorge',
-        'nachgehend' => 'Nachgehende Vorsorge',
+    // Type of preventive care (care_type)
+    'care_types' => [
+        'mandatory'  => 'Pflichtvorsorge',
+        'offered'    => 'Angebotsvorsorge',
+        'follow_up'  => 'Nachgehende Vorsorge',
     ],
 ];

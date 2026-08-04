@@ -3,14 +3,14 @@
 namespace Platform\Arbmedvv\Livewire;
 
 use Livewire\Component;
-use Platform\Arbmedvv\Models\Anlass;
+use Platform\Arbmedvv\Models\Occasion;
 
 /**
- * Modul-Nav-Sidebar für ArbMedVV.
+ * Module nav sidebar for ArbMedVV.
  *
- * Wird von der Platform-Shell automatisch als `@livewire('arbmedvv.sidebar')`
- * eingebunden (siehe core layouts/app.blade.php). Zeigt die Modul-Navigation
- * plus die 4 Teile mit Anzahl als Schnellfilter.
+ * Rendered automatically by the platform shell as `@livewire('arbmedvv.sidebar')`
+ * (see core layouts/app.blade.php). Shows the module navigation plus the 4 sections
+ * with counts as quick filters.
  */
 class Sidebar extends Component
 {
@@ -19,19 +19,19 @@ class Sidebar extends Component
         $user = auth()->user();
         $team = $user?->currentTeam;
 
-        $teilCounts = [];
+        $sectionCounts = [];
         if ($team) {
-            $teilCounts = Anlass::forTeam($team->id)
+            $sectionCounts = Occasion::forTeam($team->id)
                 ->active()
-                ->selectRaw('teil, COUNT(*) as c')
-                ->groupBy('teil')
-                ->pluck('c', 'teil')
+                ->selectRaw('section, COUNT(*) as c')
+                ->groupBy('section')
+                ->pluck('c', 'section')
                 ->all();
         }
 
         return view('arbmedvv::livewire.sidebar', [
-            'teileKurz'  => config('arbmedvv.teile_kurz'),
-            'teilCounts' => $teilCounts,
+            'sectionsShort' => config('arbmedvv.sections_short'),
+            'sectionCounts' => $sectionCounts,
         ]);
     }
 }

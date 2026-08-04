@@ -4,10 +4,10 @@ namespace Platform\Arbmedvv\Livewire;
 
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
-use Platform\Arbmedvv\Models\Anlass;
+use Platform\Arbmedvv\Models\Occasion;
 
 /**
- * ArbMedVV Dashboard – Katalog-Übersicht.
+ * ArbMedVV Dashboard – catalog overview.
  */
 class Dashboard extends Component
 {
@@ -15,30 +15,30 @@ class Dashboard extends Component
     {
         $team = Auth::user()?->currentTeam;
 
-        $anlaesse = $team
-            ? Anlass::forTeam($team->id)->active()->orderBy('teil')->orderBy('position')->get()
+        $occasions = $team
+            ? Occasion::forTeam($team->id)->active()->orderBy('section')->orderBy('position')->get()
             : collect();
 
         $stats = [
-            'total'      => $anlaesse->count(),
-            'pflicht'    => $anlaesse->where('vorsorgeart', 'pflicht')->count(),
-            'angebot'    => $anlaesse->where('vorsorgeart', 'angebot')->count(),
-            'nachgehend' => $anlaesse->where('vorsorgeart', 'nachgehend')->count(),
+            'total'     => $occasions->count(),
+            'mandatory' => $occasions->where('care_type', 'mandatory')->count(),
+            'offered'   => $occasions->where('care_type', 'offered')->count(),
+            'follow_up' => $occasions->where('care_type', 'follow_up')->count(),
         ];
 
-        // Gruppiert nach Teil, in der gesetzlichen Reihenfolge
-        $teile = config('arbmedvv.teile');
-        $grouped = collect($teile)->map(function ($label, $key) use ($anlaesse) {
+        // Grouped by section, in the statutory order
+        $sections = config('arbmedvv.sections');
+        $grouped = collect($sections)->map(function ($label, $key) use ($occasions) {
             return [
-                'key'      => $key,
-                'label'    => $label,
-                'anlaesse' => $anlaesse->where('teil', $key)->take(5)->values(),
-                'count'    => $anlaesse->where('teil', $key)->count(),
+                'key'       => $key,
+                'label'     => $label,
+                'occasions' => $occasions->where('section', $key)->take(5)->values(),
+                'count'     => $occasions->where('section', $key)->count(),
             ];
         })->values();
 
-        // Zuletzt geänderte Anlässe (rechte Aktivitäten-Sidebar)
-        $recent = $anlaesse->sortByDesc('updated_at')->take(5)->values();
+        // Recently changed occasions (right activity sidebar)
+        $recent = $occasions->sortByDesc('updated_at')->take(5)->values();
 
         return view('arbmedvv::livewire.dashboard', [
             'stats'       => $stats,

@@ -7,23 +7,23 @@ use Platform\Core\Contracts\ToolContext;
 use Platform\Core\Contracts\ToolMetadataContract;
 use Platform\Core\Contracts\ToolResult;
 use Platform\Core\Tools\Concerns\HasStandardizedWriteOperations;
-use Platform\Arbmedvv\Models\Anlass;
-use Platform\Arbmedvv\Services\AnlassService;
+use Platform\Arbmedvv\Models\Occasion;
+use Platform\Arbmedvv\Services\OccasionService;
 use Platform\Arbmedvv\Tools\Concerns\ResolvesArbmedvvTeam;
 
-class DeleteAnlassTool implements ToolContract, ToolMetadataContract
+class DeleteOccasionTool implements ToolContract, ToolMetadataContract
 {
     use HasStandardizedWriteOperations;
     use ResolvesArbmedvvTeam;
 
     public function getName(): string
     {
-        return 'arbmedvv.anlaesse.DELETE';
+        return 'arbmedvv.occasions.DELETE';
     }
 
     public function getDescription(): string
     {
-        return 'DELETE /arbmedvv/anlaesse - Loescht einen Vorsorge-Anlass (soft-delete). ERFORDERLICH: anlass_id.';
+        return 'DELETE /arbmedvv/occasions - Deletes a preventive-care occasion (soft-delete). REQUIRED: occasion_id.';
     }
 
     public function getSchema(): array
@@ -32,14 +32,14 @@ class DeleteAnlassTool implements ToolContract, ToolMetadataContract
             'properties' => [
                 'team_id' => [
                     'type' => 'integer',
-                    'description' => 'Optional: Team-ID. Default: aktuelles Team aus Kontext.',
+                    'description' => 'Optional: team id. Default: current team from context.',
                 ],
-                'anlass_id' => [
+                'occasion_id' => [
                     'type' => 'integer',
-                    'description' => 'ID des Anlasses (ERFORDERLICH).',
+                    'description' => 'Id of the occasion (REQUIRED).',
                 ],
             ],
-            'required' => ['anlass_id'],
+            'required' => ['occasion_id'],
         ]);
     }
 
@@ -52,25 +52,25 @@ class DeleteAnlassTool implements ToolContract, ToolMetadataContract
             }
             $teamId = (int) $resolved['team_id'];
 
-            $anlassId = (int) ($arguments['anlass_id'] ?? 0);
-            if ($anlassId <= 0) {
-                return ToolResult::error('VALIDATION_ERROR', 'anlass_id ist erforderlich.');
+            $occasionId = (int) ($arguments['occasion_id'] ?? 0);
+            if ($occasionId <= 0) {
+                return ToolResult::error('VALIDATION_ERROR', 'occasion_id is required.');
             }
 
-            $anlass = Anlass::query()->where('team_id', $teamId)->find($anlassId);
-            if (!$anlass) {
-                return ToolResult::error('NOT_FOUND', 'Anlass nicht gefunden (oder kein Zugriff).');
+            $occasion = Occasion::query()->where('team_id', $teamId)->find($occasionId);
+            if (!$occasion) {
+                return ToolResult::error('NOT_FOUND', 'Occasion not found (or no access).');
             }
 
-            $titel = $anlass->titel;
-            (new AnlassService())->deleteAnlass($anlass);
+            $title = $occasion->title;
+            (new OccasionService())->delete($occasion);
 
             return ToolResult::success([
-                'id' => $anlassId,
-                'message' => "Anlass '{$titel}' geloescht.",
+                'id' => $occasionId,
+                'message' => "Occasion '{$title}' deleted.",
             ]);
         } catch (\Throwable $e) {
-            return ToolResult::error('EXECUTION_ERROR', 'Fehler beim Loeschen des Anlasses: ' . $e->getMessage());
+            return ToolResult::error('EXECUTION_ERROR', 'Error deleting occasion: ' . $e->getMessage());
         }
     }
 
@@ -79,7 +79,7 @@ class DeleteAnlassTool implements ToolContract, ToolMetadataContract
         return [
             'read_only' => false,
             'category' => 'action',
-            'tags' => ['arbmedvv', 'anlaesse', 'delete'],
+            'tags' => ['arbmedvv', 'occasions', 'delete'],
             'risk_level' => 'write',
             'requires_auth' => true,
             'requires_team' => true,
