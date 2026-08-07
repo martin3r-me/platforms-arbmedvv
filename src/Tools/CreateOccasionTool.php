@@ -36,12 +36,12 @@ class CreateOccasionTool implements ToolContract, ToolMetadataContract
                 'section' => [
                     'type' => 'string',
                     'enum' => ['hazardous_substances', 'biological_agents', 'physical_agents', 'other'],
-                    'description' => 'Annex part (REQUIRED).',
+                    'description' => 'Annex part. Optional — leave empty for annex-independent Wunschvorsorge (§5a).',
                 ],
                 'care_type' => [
                     'type' => 'string',
-                    'enum' => ['mandatory', 'offered', 'follow_up'],
-                    'description' => 'Type of preventive care (REQUIRED).',
+                    'enum' => ['mandatory', 'offered', 'request', 'follow_up'],
+                    'description' => 'Type of preventive care (REQUIRED). request = Wunschvorsorge (§5a).',
                 ],
                 'title' => [
                     'type' => 'string',
@@ -68,8 +68,20 @@ class CreateOccasionTool implements ToolContract, ToolMetadataContract
                     'enum' => ['active', 'archived'],
                     'description' => 'Optional: status. Default: active.',
                 ],
+                'valid_from' => [
+                    'type' => 'string',
+                    'description' => 'Optional: valid-from date (YYYY-MM-DD) for versioning/novellierungen.',
+                ],
+                'valid_until' => [
+                    'type' => 'string',
+                    'description' => 'Optional: valid-until date (YYYY-MM-DD). Empty = currently valid.',
+                ],
+                'regulation_label' => [
+                    'type' => 'string',
+                    'description' => 'Optional: regulation version label, e.g. "ArbMedVV Stand 2019".',
+                ],
             ],
-            'required' => ['section', 'care_type', 'title', 'trigger'],
+            'required' => ['care_type', 'title', 'trigger'],
         ]);
     }
 
@@ -86,12 +98,15 @@ class CreateOccasionTool implements ToolContract, ToolMetadataContract
             }
             $teamId = (int) $resolved['team_id'];
 
-            $section = (string) ($arguments['section'] ?? '');
-            if (!in_array($section, ['hazardous_substances', 'biological_agents', 'physical_agents', 'other'], true)) {
+            // section optional (leer = anhangsunabhängig, z.B. Wunschvorsorge §5a).
+            $section = trim((string) ($arguments['section'] ?? ''));
+            if ($section === '') {
+                $section = null;
+            } elseif (!in_array($section, ['hazardous_substances', 'biological_agents', 'physical_agents', 'other'], true)) {
                 return ToolResult::error('VALIDATION_ERROR', 'section is invalid.');
             }
             $careType = (string) ($arguments['care_type'] ?? '');
-            if (!in_array($careType, ['mandatory', 'offered', 'follow_up'], true)) {
+            if (!in_array($careType, ['mandatory', 'offered', 'request', 'follow_up'], true)) {
                 return ToolResult::error('VALIDATION_ERROR', 'care_type is invalid.');
             }
             $title = trim((string) ($arguments['title'] ?? ''));
@@ -118,6 +133,9 @@ class CreateOccasionTool implements ToolContract, ToolMetadataContract
                 'legal_basis' => isset($arguments['legal_basis']) && $arguments['legal_basis'] !== '' ? trim((string) $arguments['legal_basis']) : null,
                 'description' => isset($arguments['description']) && $arguments['description'] !== '' ? trim((string) $arguments['description']) : null,
                 'status' => $status,
+                'valid_from' => isset($arguments['valid_from']) && $arguments['valid_from'] !== '' ? (string) $arguments['valid_from'] : null,
+                'valid_until' => isset($arguments['valid_until']) && $arguments['valid_until'] !== '' ? (string) $arguments['valid_until'] : null,
+                'regulation_label' => isset($arguments['regulation_label']) && $arguments['regulation_label'] !== '' ? trim((string) $arguments['regulation_label']) : null,
             ]);
 
             return ToolResult::success([

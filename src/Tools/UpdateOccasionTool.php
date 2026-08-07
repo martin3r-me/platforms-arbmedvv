@@ -45,7 +45,7 @@ class UpdateOccasionTool implements ToolContract, ToolMetadataContract
                 ],
                 'care_type' => [
                     'type' => 'string',
-                    'enum' => ['mandatory', 'offered', 'follow_up'],
+                    'enum' => ['mandatory', 'offered', 'request', 'follow_up'],
                     'description' => 'Optional: new care type.',
                 ],
                 'title' => ['type' => 'string', 'description' => 'Optional: new title.'],
@@ -91,7 +91,7 @@ class UpdateOccasionTool implements ToolContract, ToolMetadataContract
                 $payload['section'] = $arguments['section'];
             }
             if (array_key_exists('care_type', $arguments) && $arguments['care_type'] !== null) {
-                if (!in_array($arguments['care_type'], ['mandatory', 'offered', 'follow_up'], true)) {
+                if (!in_array($arguments['care_type'], ['mandatory', 'offered', 'request', 'follow_up'], true)) {
                     return ToolResult::error('VALIDATION_ERROR', 'care_type is invalid.');
                 }
                 $payload['care_type'] = $arguments['care_type'];
