@@ -35,7 +35,7 @@ class ArbmedvvServiceProvider extends ServiceProvider
             PlatformCore::registerModule([
                 'key'        => 'arbmedvv',
                 'title'      => 'ArbMedVV',
-                'group'      => 'praxis_admin',
+                'group'      => 'catalog',
                 'routing'    => config('arbmedvv.routing'),
                 'guard'      => config('arbmedvv.guard'),
                 'navigation' => config('arbmedvv.navigation'),
