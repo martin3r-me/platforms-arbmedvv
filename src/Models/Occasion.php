@@ -30,12 +30,19 @@ class Occasion extends Model
         'legal_basis',
         'description',
         'status',
+        'version',
+        'valid_from',
+        'valid_until',
+        'regulation_label',
         'position',
         'created_by_user_id',
     ];
 
     protected $casts = [
-        'position' => 'integer',
+        'position'    => 'integer',
+        'version'     => 'integer',
+        'valid_from'  => 'date',
+        'valid_until' => 'date',
     ];
 
     protected static function booted(): void
@@ -93,12 +100,35 @@ class Occasion extends Model
 
     public function sectionLabel(): string
     {
+        if (empty($this->section)) {
+            return 'Anhangsunabhängig (§5a)';
+        }
+
         return config("arbmedvv.sections.{$this->section}", $this->section);
     }
 
     public function sectionShortLabel(): string
     {
+        if (empty($this->section)) {
+            return 'Anhangsunabhängig';
+        }
+
         return config("arbmedvv.sections_short.{$this->section}", $this->sectionLabel());
+    }
+
+    /** Gültig zum Stichtag (Versionierung / Novellierungen). */
+    public function isCurrentlyValid($asOf = null): bool
+    {
+        $asOf = $asOf ? \Illuminate\Support\Carbon::parse($asOf) : \Illuminate\Support\Carbon::now();
+
+        if ($this->valid_from && $this->valid_from->gt($asOf)) {
+            return false;
+        }
+        if ($this->valid_until && $this->valid_until->lt($asOf)) {
+            return false;
+        }
+
+        return true;
     }
 
     public function careTypeLabel(): string

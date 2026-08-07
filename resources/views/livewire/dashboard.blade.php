@@ -1,6 +1,6 @@
 {{-- ArbMedVV Dashboard – Katalog-Übersicht (nx-Design) --}}
 @php
-    $careTypeVariant = ['mandatory' => 'danger', 'offered' => 'info', 'follow_up' => 'neutral'];
+    $careTypeVariant = ['mandatory' => 'danger', 'offered' => 'info', 'request' => 'success', 'follow_up' => 'neutral'];
 @endphp
 
 <x-ui-page>

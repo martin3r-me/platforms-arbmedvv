@@ -1,6 +1,6 @@
 {{-- ArbMedVV – Anlass-Detail + Inline-Edit (nx-Design) --}}
 @php
-    $careTypeVariant = ['mandatory' => 'danger', 'offered' => 'info', 'follow_up' => 'neutral'];
+    $careTypeVariant = ['mandatory' => 'danger', 'offered' => 'info', 'request' => 'success', 'follow_up' => 'neutral'];
     $sectionOptions = collect($sections)->map(fn ($label, $key) => ['value' => $key, 'label' => $label])->values()->all();
     $careTypeOptions = collect($careTypes)->map(fn ($label, $key) => ['value' => $key, 'label' => $label])->values()->all();
     $statusOptions = [
@@ -79,6 +79,14 @@
                 </x-nx-property-row>
                 <x-nx-property-row icon="heroicon-o-book-open" label="Rechtsgrundlage">
                     {{ $occasion->legal_basis ?: '—' }}
+                </x-nx-property-row>
+                <x-nx-property-row icon="heroicon-o-clock" label="Gültigkeit">
+                    @php($vf = $occasion->valid_from?->format('d.m.Y'))
+                    @php($vu = $occasion->valid_until?->format('d.m.Y'))
+                    {{ $vf ? ('ab ' . $vf) : 'ab —' }}{{ $vu ? (' bis ' . $vu) : ' (aktuell gültig)' }}
+                </x-nx-property-row>
+                <x-nx-property-row icon="heroicon-o-hashtag" label="Version / Rechtsstand">
+                    v{{ $occasion->version }}{{ $occasion->regulation_label ? (' · ' . $occasion->regulation_label) : '' }}
                 </x-nx-property-row>
             </x-nx-card>
 

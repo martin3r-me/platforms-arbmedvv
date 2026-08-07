@@ -1,6 +1,6 @@
 {{-- ArbMedVV – Anlass-Katalog (Liste nach Teil gruppiert, Suche + Filter + Anlege-Modal) --}}
 @php
-    $careTypeVariant = ['mandatory' => 'danger', 'offered' => 'info', 'follow_up' => 'neutral'];
+    $careTypeVariant = ['mandatory' => 'danger', 'offered' => 'info', 'request' => 'success', 'follow_up' => 'neutral'];
     $sectionOptions = collect($sections)->map(fn ($label, $key) => ['value' => $key, 'label' => $label])->values()->all();
     $careTypeOptions = collect($careTypes)->map(fn ($label, $key) => ['value' => $key, 'label' => $label])->values()->all();
 @endphp
@@ -77,7 +77,8 @@
 
         <div class="space-y-4">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <x-nx-input-select name="form.section" label="Teil" wire:model="form.section" :options="$sectionOptions" required />
+                <x-nx-input-select name="form.section" label="Teil" wire:model="form.section" :options="$sectionOptions"
+                    nullable nullLabel="— anhangsunabhängig (§5a) —" />
                 <x-nx-input-select name="form.care_type" label="Vorsorgeart" wire:model="form.care_type" :options="$careTypeOptions" required />
             </div>
             <x-nx-input-text name="form.title" label="Titel" wire:model="form.title" placeholder="z.B. Feuchtarbeit" required />
@@ -90,6 +91,14 @@
                     placeholder="z.B. Anhang Teil 1 (2)" />
             </div>
             <x-nx-input-textarea name="form.description" label="Beschreibung / Hinweise" wire:model="form.description" :rows="3" />
+
+            {{-- #45 Versionierung / Gültigkeit (für Novellierungen) --}}
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <x-nx-input-date name="form.valid_from" label="Gültig ab" wire:model="form.valid_from" />
+                <x-nx-input-date name="form.valid_until" label="Gültig bis" wire:model="form.valid_until" />
+                <x-nx-input-text name="form.regulation_label" label="Rechtsstand" wire:model="form.regulation_label"
+                    placeholder="z.B. ArbMedVV Stand 2019" />
+            </div>
         </div>
 
         <x-slot name="footer">
@@ -113,6 +122,7 @@
                     <div class="space-y-2">
                         <div><x-nx-badge variant="danger" dot>Pflichtvorsorge</x-nx-badge></div>
                         <div><x-nx-badge variant="info" dot>Angebotsvorsorge</x-nx-badge></div>
+                        <div><x-nx-badge variant="success" dot>Wunschvorsorge (§5a)</x-nx-badge></div>
                         <div><x-nx-badge variant="neutral" dot>Nachgehende Vorsorge</x-nx-badge></div>
                     </div>
                 </div>

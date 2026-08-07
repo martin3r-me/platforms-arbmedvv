@@ -78,6 +78,7 @@ return [
     'care_types' => [
         'mandatory'  => 'Pflichtvorsorge',
         'offered'    => 'Angebotsvorsorge',
+        'request'    => 'Wunschvorsorge (§5a)',
         'follow_up'  => 'Nachgehende Vorsorge',
     ],
 ];

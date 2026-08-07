@@ -19,25 +19,32 @@ class Index extends Component
     // Create modal
     public bool $showCreate = false;
     public array $form = [
-        'section'     => 'hazardous_substances',
-        'care_type'   => 'mandatory',
-        'title'       => '',
-        'trigger'     => '',
-        'threshold'   => '',
-        'legal_basis' => '',
-        'description' => '',
+        'section'          => 'hazardous_substances',
+        'care_type'        => 'mandatory',
+        'title'            => '',
+        'trigger'          => '',
+        'threshold'        => '',
+        'legal_basis'      => '',
+        'description'      => '',
+        'valid_from'       => '',
+        'valid_until'      => '',
+        'regulation_label' => '',
     ];
 
     protected function rules(): array
     {
         return [
-            'form.section'     => 'required|in:hazardous_substances,biological_agents,physical_agents,other',
-            'form.care_type'   => 'required|in:mandatory,offered,follow_up',
-            'form.title'       => 'required|string|max:255',
-            'form.trigger'     => 'required|string',
-            'form.threshold'   => 'nullable|string|max:255',
-            'form.legal_basis' => 'nullable|string|max:255',
-            'form.description' => 'nullable|string',
+            // section nullable: Wunschvorsorge (§5a) ist anhangsunabhängig.
+            'form.section'          => 'nullable|in:hazardous_substances,biological_agents,physical_agents,other',
+            'form.care_type'        => 'required|in:mandatory,offered,request,follow_up',
+            'form.title'            => 'required|string|max:255',
+            'form.trigger'          => 'required|string',
+            'form.threshold'        => 'nullable|string|max:255',
+            'form.legal_basis'      => 'nullable|string|max:255',
+            'form.description'      => 'nullable|string',
+            'form.valid_from'       => 'nullable|date',
+            'form.valid_until'      => 'nullable|date',
+            'form.regulation_label' => 'nullable|string|max:255',
         ];
     }
 
@@ -56,16 +63,22 @@ class Index extends Component
 
         $team = Auth::user()->currentTeam;
 
+        // Wunschvorsorge (§5a) ist anhangsunabhängig → leere section = null.
+        $section = $this->form['section'] !== '' ? $this->form['section'] : null;
+
         $service->create([
             'team_id'            => $team->id,
             'created_by_user_id' => Auth::id(),
-            'section'            => $this->form['section'],
+            'section'            => $section,
             'care_type'          => $this->form['care_type'],
             'title'              => trim($this->form['title']),
             'trigger'            => trim($this->form['trigger']),
             'threshold'          => $this->form['threshold'] !== '' ? trim($this->form['threshold']) : null,
             'legal_basis'        => $this->form['legal_basis'] !== '' ? trim($this->form['legal_basis']) : null,
             'description'        => $this->form['description'] !== '' ? trim($this->form['description']) : null,
+            'valid_from'         => $this->form['valid_from'] !== '' ? $this->form['valid_from'] : null,
+            'valid_until'        => $this->form['valid_until'] !== '' ? $this->form['valid_until'] : null,
+            'regulation_label'   => $this->form['regulation_label'] !== '' ? trim($this->form['regulation_label']) : null,
         ]);
 
         $this->showCreate = false;
@@ -106,6 +119,16 @@ class Index extends Component
             ])
             ->filter(fn ($g) => $g['occasions']->isNotEmpty())
             ->values();
+
+        // Anhangsunabhängige (Wunschvorsorge §5a) — section = null — als eigener Block.
+        $wishOccasions = $occasions->filter(fn ($o) => empty($o->section))->values();
+        if ($wishOccasions->isNotEmpty()) {
+            $grouped->push([
+                'key'       => '_wish',
+                'label'     => 'Anhangsunabhängig (§5a Wunschvorsorge)',
+                'occasions' => $wishOccasions,
+            ]);
+        }
 
         // Recently changed occasions (right activity sidebar), regardless of filter
         $recent = $team
