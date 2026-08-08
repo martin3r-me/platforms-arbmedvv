@@ -26,6 +26,15 @@ class ArbmedvvServiceProvider extends ServiceProvider
             'arbmedvv_occasion' => \Platform\Arbmedvv\Models\Occasion::class,
         ]);
 
+        // Vermengungsgruppen-Provider registrieren (lose Kopplung → der Termin prüft über die Core-Registry).
+        if (class_exists(\Platform\Core\Support\CatalogCombinationRegistry::class)) {
+            try {
+                app(\Platform\Core\Support\CatalogCombinationRegistry::class)
+                    ->register(new \Platform\Arbmedvv\Catalog\OccasionCombinationProvider());
+            } catch (\Throwable $e) {
+            }
+        }
+
         // Step 1: Register module
         if (
             config()->has('arbmedvv.routing') &&
