@@ -48,6 +48,10 @@ class UpdateOccasionTool implements ToolContract, ToolMetadataContract
                     'enum' => ['mandatory', 'offered', 'request', 'follow_up'],
                     'description' => 'Optional: new care type.',
                 ],
+                'combination_group' => [
+                    'type' => 'string',
+                    'description' => 'Optional: Vermengungsgruppe (orthogonal zu care_type), z.B. "vorsorge" | "eignung". ArbMedVV ist Vorsorge. Nur EINE Gruppe je Termin erlaubt.',
+                ],
                 'title' => ['type' => 'string', 'description' => 'Optional: new title.'],
                 'trigger' => ['type' => 'string', 'description' => 'Optional: new trigger wording.'],
                 'threshold' => ['type' => 'string', 'description' => 'Optional: new threshold (empty string = clear).'],
@@ -110,7 +114,7 @@ class UpdateOccasionTool implements ToolContract, ToolMetadataContract
                 }
                 $payload['trigger'] = $trigger;
             }
-            foreach (['threshold', 'legal_basis', 'description'] as $optional) {
+            foreach (['threshold', 'legal_basis', 'description', 'combination_group'] as $optional) {
                 if (array_key_exists($optional, $arguments)) {
                     $val = $arguments[$optional];
                     $payload[$optional] = ($val === null || trim((string) $val) === '') ? null : trim((string) $val);

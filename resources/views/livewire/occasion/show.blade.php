@@ -3,6 +3,7 @@
     $careTypeVariant = ['mandatory' => 'danger', 'offered' => 'info', 'request' => 'success', 'follow_up' => 'neutral'];
     $sectionOptions = collect($sections)->map(fn ($label, $key) => ['value' => $key, 'label' => $label])->values()->all();
     $careTypeOptions = collect($careTypes)->map(fn ($label, $key) => ['value' => $key, 'label' => $label])->values()->all();
+    $combinationGroupOptions = collect($combinationGroups)->map(fn ($label, $key) => ['value' => $key, 'label' => $label])->values()->all();
     $statusOptions = [
         ['value' => 'active', 'label' => 'Aktiv'],
         ['value' => 'archived', 'label' => 'Archiviert'],
@@ -41,6 +42,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <x-nx-input-select name="form.section" label="Teil" wire:model="form.section" :options="$sectionOptions" required />
                         <x-nx-input-select name="form.care_type" label="Vorsorgeart" wire:model="form.care_type" :options="$careTypeOptions" required />
+                        <x-nx-input-select name="form.combination_group" label="Vermengungsgruppe" wire:model="form.combination_group" nullable nullLabel="— ohne —" :options="$combinationGroupOptions" />
                         <x-nx-input-select name="form.status" label="Status" wire:model="form.status" :options="$statusOptions" required />
                     </div>
                     <x-nx-input-text name="form.title" label="Titel" wire:model="form.title" required />

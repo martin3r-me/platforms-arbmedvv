@@ -81,4 +81,12 @@ return [
         'request'    => 'Wunschvorsorge (§5a)',
         'follow_up'  => 'Nachgehende Vorsorge',
     ],
+
+    // Vermengungs-/Exklusivitätsgruppen (orthogonal zu care_type). ArbMedVV = ausschließlich
+    // Vorsorge; "eignung" ist hier nur der Vollständigkeit halber / für konsistente Prüfung.
+    // Regel (Termin/Bescheinigung): nur EINE nicht-leere Gruppe je Termin.
+    'combination_groups' => [
+        'vorsorge' => 'Vorsorge',
+        'eignung'  => 'Eignung',
+    ],
 ];

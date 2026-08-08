@@ -43,6 +43,10 @@ class CreateOccasionTool implements ToolContract, ToolMetadataContract
                     'enum' => ['mandatory', 'offered', 'request', 'follow_up'],
                     'description' => 'Type of preventive care (REQUIRED). request = Wunschvorsorge (§5a).',
                 ],
+                'combination_group' => [
+                    'type' => 'string',
+                    'description' => 'Optional: Vermengungsgruppe (orthogonal zu care_type). Default "vorsorge" (ArbMedVV = Vorsorge). Nur EINE Gruppe je Termin erlaubt.',
+                ],
                 'title' => [
                     'type' => 'string',
                     'description' => 'Short name, e.g. "Feuchtarbeit" (REQUIRED).',
@@ -127,6 +131,7 @@ class CreateOccasionTool implements ToolContract, ToolMetadataContract
                 'created_by_user_id' => $context->user->id,
                 'section' => $section,
                 'care_type' => $careType,
+                'combination_group' => isset($arguments['combination_group']) && $arguments['combination_group'] !== '' ? trim((string) $arguments['combination_group']) : 'vorsorge',
                 'title' => $title,
                 'trigger' => $trigger,
                 'threshold' => isset($arguments['threshold']) && $arguments['threshold'] !== '' ? trim((string) $arguments['threshold']) : null,

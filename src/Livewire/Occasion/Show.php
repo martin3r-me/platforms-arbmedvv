@@ -33,6 +33,7 @@ class Show extends Component
         return [
             'form.section'     => 'required|in:hazardous_substances,biological_agents,physical_agents,other',
             'form.care_type'   => 'required|in:mandatory,offered,follow_up',
+            'form.combination_group' => 'nullable|string|max:64',
             'form.title'       => 'required|string|max:255',
             'form.trigger'     => 'required|string',
             'form.threshold'   => 'nullable|string|max:255',
@@ -47,6 +48,7 @@ class Show extends Component
         $this->form = [
             'section'     => $this->occasion->section,
             'care_type'   => $this->occasion->care_type,
+            'combination_group' => $this->occasion->combination_group ?? 'vorsorge',
             'title'       => $this->occasion->title,
             'trigger'     => $this->occasion->trigger,
             'threshold'   => $this->occasion->threshold ?? '',
@@ -65,6 +67,7 @@ class Show extends Component
         $service->update($this->occasion, [
             'section'     => $this->form['section'],
             'care_type'   => $this->form['care_type'],
+            'combination_group' => $this->form['combination_group'] !== '' ? trim($this->form['combination_group']) : null,
             'title'       => trim($this->form['title']),
             'trigger'     => trim($this->form['trigger']),
             'threshold'   => $this->form['threshold'] !== '' ? trim($this->form['threshold']) : null,
@@ -91,6 +94,7 @@ class Show extends Component
         return view('arbmedvv::livewire.occasion.show', [
             'sections'  => config('arbmedvv.sections'),
             'careTypes' => config('arbmedvv.care_types'),
+            'combinationGroups' => config('arbmedvv.combination_groups', []),
         ])->layout('platform::layouts.app');
     }
 }

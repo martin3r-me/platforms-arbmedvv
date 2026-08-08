@@ -24,6 +24,7 @@ class Occasion extends Model
         'team_id',
         'section',
         'care_type',
+        'combination_group',
         'title',
         'trigger',
         'threshold',
