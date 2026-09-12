@@ -21,6 +21,8 @@ class Occasion extends Model
 
     protected $fillable = [
         'uuid',
+        'catalog_code',   // kanonischer Master-Schlüssel des Anlasses (team-übergreifend, sync-stabil)
+        'examination_id', // lose Referenz auf das Verfahren (examinations.id); N:1 Anlass → Verfahren
         'team_id',
         'section',
         'care_type',
