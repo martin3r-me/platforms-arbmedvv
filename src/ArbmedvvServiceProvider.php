@@ -3,7 +3,6 @@
 namespace Platform\Arbmedvv;
 
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Livewire\Livewire;
@@ -39,7 +38,7 @@ class ArbmedvvServiceProvider extends ServiceProvider
         if (
             config()->has('arbmedvv.routing') &&
             config()->has('arbmedvv.navigation') &&
-            Schema::hasTable('modules')
+            PlatformCore::modulesTableExists()
         ) {
             PlatformCore::registerModule([
                 'key'        => 'arbmedvv',
